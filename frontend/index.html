@@ -1,0 +1,533 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Learning Planner</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #f5f3ee;
+      color: #2d3a2d;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+    }
+
+    header h1 {
+      font-weight: 500;
+    }
+
+    nav {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    nav button {
+      border: none;
+      background: #dfe8dc;
+      padding: 10px 22px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    nav button.active {
+      background: #6d8b6d;
+      color: white;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 30px 0;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, .06);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
+
+    button.primary {
+      background: #6d8b6d;
+      color: white;
+      border: none;
+      padding: 11px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #dfe8dc;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .topic-card {
+      margin-top: 15px;
+    }
+
+    .topic-title {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .meta {
+      color: gray;
+      margin: 8px 0;
+    }
+
+    .progress-container {
+      margin-top: 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background: #e7e7e7;
+      border-radius: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #7ca37c;
+    }
+
+    .week {
+      margin-bottom: 18px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #eef4ed;
+    }
+
+    .week h3 {
+      margin-bottom: 8px;
+    }
+
+    .task {
+      margin-left: 10px;
+      margin-bottom: 6px;
+    }
+
+    .checkbox {
+      margin-right: 8px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, .05);
+    }
+
+    .big {
+      font-size: 34px;
+      margin-top: 8px;
+      color: #6d8b6d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+
+    <h1>🌿 Daily Learning Planner</h1>
+
+    <nav>
+
+      <button class="tab active" data-tab="topics">
+        Topics
+      </button>
+
+      <button class="tab" data-tab="plan">
+        Daily Plan
+      </button>
+
+      <button class="tab" data-tab="progress">
+        Progress
+      </button>
+
+    </nav>
+
+  </header>
+
+  <div class="container">
+
+    <!-- TOPICS -->
+
+    <div class="section active" id="topics">
+
+      <div class="card">
+
+        <h2>Add New Topic</h2>
+
+        <input id="title" placeholder="Topic Name">
+
+        <input id="weeks" type="number" value="4" placeholder="Weeks">
+
+        <input id="hours" type="number" value="5" placeholder="Hours per Week">
+
+        <button class="primary" onclick="save()">
+          + Add Topic
+        </button>
+
+      </div>
+
+      <div id="topicList"></div>
+
+    </div>
+
+    <!-- PLAN -->
+
+    <div class="section" id="plan">
+
+      <div class="card">
+
+        <h2>Generated Study Plan</h2>
+
+        <div id="schedule"></div>
+
+      </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+
+    <div class="section" id="progress">
+
+      <div class="stats">
+
+        <div class="stat-card">
+
+          <div>Total Tasks</div>
+
+          <div class="big" id="totalTasks">0</div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div>Completed</div>
+
+          <div class="big" id="completedTasks">0</div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div>Completion</div>
+
+          <div class="big" id="percentage">0%</div>
+
+        </div>
+
+      </div>
+
+      <div class="card progress-container">
+
+        <h3>Overall Progress</h3>
+
+        <br>
+
+        <div class="progress-bar">
+
+          <div class="progress-fill" id="fill"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const tabs = document.querySelectorAll(".tab");
+    const sections = document.querySelectorAll(".section");
+
+    tabs.forEach(btn => {
+
+      btn.onclick = () => {
+
+        tabs.forEach(b => b.classList.remove("active"));
+        sections.forEach(s => s.classList.remove("active"));
+
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+
+      }
+
+    });
+
+    async function load() {
+
+      const res = await fetch("/api/topics");
+      const data = await res.json();
+
+      let html = "";
+
+      data.forEach(t => {
+
+        html += `
+
+<div class="card topic-card">
+
+<div class="topic-title">${t.title}</div>
+
+<div class="meta">
+
+${t.weeks} weeks • ${t.hours_per_week} hrs/week
+
+</div>
+
+<button class="primary" onclick="generate(${t.id})">
+
+Generate Plan
+
+</button>
+
+<button class="secondary"
+
+onclick="viewPlan(${t.id})">
+
+View Plan
+
+</button>
+
+</div>
+
+`;
+
+      });
+
+      document.getElementById("topicList").innerHTML = html;
+
+    }
+
+    async function save() {
+
+      const title = document.getElementById("title").value;
+
+      const weeks = document.getElementById("weeks").value;
+
+      const hours = document.getElementById("hours").value;
+
+      if (!title) {
+
+        alert("Enter topic");
+
+        return;
+
+      }
+
+      await fetch("/api/topics", {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+          title,
+
+          description: "",
+
+          skill_level: "beginner",
+
+          weeks,
+
+          hours_per_week: hours
+
+        })
+
+      });
+
+      document.getElementById("title").value = "";
+
+      load();
+
+    }
+
+    async function generate(id) {
+
+      await fetch("/api/schedule/generate/" + id, {
+
+        method: "POST"
+
+      });
+
+      viewPlan(id);
+
+    }
+
+    async function viewPlan(id) {
+
+      const res = await fetch("/api/schedule/" + id);
+
+      const data = await res.json();
+
+      let html = "";
+
+      let total = 0;
+
+      let done = 0;
+
+      data.forEach(w => {
+
+        html += `
+
+<div class="week">
+
+<h3>
+
+Week ${w.week_number}
+
+</h3>
+
+`;
+
+        w.tasks.forEach(task => {
+
+          total++;
+
+          html += `
+
+<div class="task">
+
+<label>
+
+<input type="checkbox"
+
+class="checkbox"
+
+onchange="updateProgress(this)">
+
+${task.task_title}
+
+(${task.estimated_hours}h)
+
+</label>
+
+</div>
+
+`;
+
+        });
+
+        html += "</div>";
+
+      });
+
+      document.getElementById("schedule").innerHTML = html;
+
+      window.totalTasks = total;
+
+      window.completed = done;
+
+      refreshProgress();
+
+    }
+
+    function updateProgress(box) {
+
+      if (box.checked)
+
+        window.completed++;
+
+      else
+
+        window.completed--;
+
+      refreshProgress();
+
+    }
+
+    function refreshProgress() {
+
+      document.getElementById("totalTasks").innerText =
+
+        window.totalTasks || 0;
+
+      document.getElementById("completedTasks").innerText =
+
+        window.completed || 0;
+
+      let p = 0;
+
+      if (window.totalTasks)
+
+        p = Math.round(
+
+          window.completed / window.totalTasks * 100
+
+        );
+
+      document.getElementById("percentage").innerText =
+
+        p + "%";
+
+      document.getElementById("fill").style.width =
+
+        p + "%";
+
+    }
+
+    load();
+
+  </script>
+
+</body>
+
+</html>
+```
